@@ -10,6 +10,8 @@
   display: inline-flex;
   align-items: center;
   gap: .45rem;
+  flex-shrink: 0;
+  white-space: nowrap;
   margin-left: clamp(.75rem, 2vw, 1.5rem);
   padding: .35rem 0;
   font-family: var(--sans);
