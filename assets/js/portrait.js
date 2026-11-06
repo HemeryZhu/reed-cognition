@@ -209,6 +209,96 @@ REED.portrait = (function () {
       return;
     }
 
+    if (REED.llm && REED.llm.hasKey()) {
+      renderWithModel(box, raw, r);
+      return;
+    }
+
+    renderLocal(box, r);
+  }
+
+  /* ---------- 有模型时：让它基于具体细节推演 ---------- */
+
+  var PORTRAIT_SYSTEM = [
+    '你在帮一个人理解让他困惑的另一个人。不是审判，是推演。',
+    '',
+    '原则：',
+    '一、不给人格标签，不做心理诊断，不判断谁对谁错。',
+    '二、只根据用户写下的具体行为推测，每个推测都要能追回到他写的某个细节。',
+    '三、记住这只是他的视角，不是对方的全貌。',
+    '四、建议要具体到一句话怎么说，不要空泛的道理。',
+    '',
+    '只输出 JSON，不要任何多余文字：',
+    '{"facets":[{"facet":"他露出的一个面，一句话","why":"为什么会这样，两句以内","quote":"用户原文里的证据片段"}],' +
+    '"protect":"他大概在保护什么，80 字内",' +
+    '"advice":["可以怎么说，具体到一句话","再一条","再一条"],' +
+    '"self":"关于用户自己的那一半，60 字内，没有就给空字符串"}',
+    'facets 最多 3 个，按证据强弱排序。'
+  ].join('\n');
+
+  function renderWithModel(box, raw, r) {
+    box.hidden = false;
+    box.innerHTML = '<div class="result-block">' +
+      '<p class="facet-why turn-thinking">正在推演他的结构</p>' +
+    '</div>';
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    REED.llm.json([
+      { role: 'system', content: PORTRAIT_SYSTEM },
+      { role: 'user', content: raw }
+    ], { maxTokens: 1100, temperature: 0.6 }).then(function (res) {
+      renderModelResult(box, res, r);
+    }).catch(function (err) {
+      renderLocal(box, r);
+      var note = document.createElement('p');
+      note.className = 'caution';
+      note.textContent = '模型没接上（' + err.message + '）。下面这份是按本地规则推的。';
+      box.insertBefore(note, box.firstChild);
+    });
+  }
+
+  function renderModelResult(box, res, r) {
+    var facets = (res.facets || []).filter(function (f) { return f && f.facet; }).slice(0, 3);
+    if (!facets.length) { renderLocal(box, r); return; }
+
+    var html = '<div class="result-block">' +
+      '<h3>他从你的描述里，露出了这几个面</h3>' +
+      facets.map(function (f) {
+        return '<div class="facet">' +
+          '<p class="facet-title">' + esc(f.facet) + '</p>' +
+          (f.why ? '<p class="facet-why">' + esc(f.why) + '</p>' : '') +
+          (f.quote ? '<p class="facet-quote">你写的：「' + esc(clip(f.quote, 46)) + '」</p>' : '') +
+        '</div>';
+      }).join('') +
+    '</div>';
+
+    if (res.protect) {
+      html += '<div class="result-block">' +
+        '<h3>他大概在保护什么</h3>' +
+        '<p class="facet-why">' + esc(res.protect) + '</p>' +
+      '</div>';
+    }
+
+    var advice = (res.advice || []).filter(Boolean).slice(0, 4);
+    if (advice.length) {
+      html += '<div class="result-block">' +
+        '<h3>和他说话时，可以试试</h3>' +
+        '<ol class="advice">' + advice.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ol>' +
+      '</div>';
+    }
+
+    if (res.self) {
+      html += '<div class="result-block">' +
+        '<h3>也看看你自己这一半</h3>' +
+        '<p class="facet-why">' + esc(res.self) + '</p>' +
+      '</div>';
+    }
+
+    html += caution();
+    box.innerHTML = html;
+  }
+
+  function renderLocal(box, r) {
     if (!r.facets.length) {
       renderThin(box, r);
       return;

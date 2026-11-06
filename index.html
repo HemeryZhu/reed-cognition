@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="assets/css/app.css">
 <link rel="stylesheet" href="assets/css/map.css">
 <link rel="stylesheet" href="assets/css/lens.css">
+<link rel="stylesheet" href="assets/css/llm.css">
 </head>
 <body>
 
@@ -32,6 +33,9 @@
     <a href="#/other" data-view="other">他人</a>
     <a href="#/about" data-view="about">方法与边界</a>
   </nav>
+  <button class="nav-set" id="btnLLM" type="button">
+    <span id="llmDot" class="nav-set-dot"></span>模型
+  </button>
 </header>
 
 <main id="app">
@@ -222,8 +226,46 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<!-- ========== 模型设置 ========== -->
+<div class="sheet-mask" id="llmSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="llmTitle">
+    <div class="sheet-head">
+      <h2 id="llmTitle">接入模型</h2>
+      <button class="sheet-close" id="llmClose" type="button" aria-label="关闭">×</button>
+    </div>
+    <p class="sheet-note">
+      填一个 OpenAI 兼容的接口，对话就会改成由模型来追问。Key 只写进这台设备的浏览器，
+      不上传、不进代码；这个页面是公开的，所以每个人填自己的。
+    </p>
+    <label class="sheet-field">
+      <span>接口地址</span>
+      <input id="llmBase" type="url" autocomplete="off" spellcheck="false" placeholder="https://api.deepseek.com/v1">
+    </label>
+    <label class="sheet-field">
+      <span>模型</span>
+      <input id="llmModel" type="text" autocomplete="off" spellcheck="false" placeholder="deepseek-chat">
+    </label>
+    <label class="sheet-field">
+      <span>API Key</span>
+      <input id="llmKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-...">
+    </label>
+    <p class="sheet-msg" id="llmMsg" role="status" aria-live="polite"></p>
+    <div class="sheet-actions">
+      <button class="btn" id="llmTest" type="button">测试连接</button>
+      <button class="btn btn-ink" id="llmSave" type="button">保存</button>
+      <button class="btn btn-quiet" id="llmClear" type="button">清除</button>
+    </div>
+    <p class="sheet-foot">
+      常用：DeepSeek <code>https://api.deepseek.com/v1</code> ／ 智谱 <code>https://open.bigmodel.cn/api/paas/v4</code>
+      ／ Moonshot <code>https://api.moonshot.cn/v1</code> ／ OpenAI <code>https://api.openai.com/v1</code>
+    </p>
+  </div>
+</div>
+
+
 <script src="assets/js/content.js"></script>
 <script src="assets/js/store.js"></script>
+<script src="assets/js/llm.js"></script>
 <script src="assets/js/dialogue.js"></script>
 <script src="assets/js/portrait.js"></script>
 <script src="assets/js/map.js"></script>

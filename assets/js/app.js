@@ -70,9 +70,104 @@
     }
   }
 
+  /* ---------- 模型设置 ---------- */
+
+  function initLLM() {
+    var btn = $('#btnLLM');
+    var mask = $('#llmSheet');
+    if (!btn || !mask || !REED.llm) return;
+
+    var fBase = $('#llmBase');
+    var fModel = $('#llmModel');
+    var fKey = $('#llmKey');
+    var msg = $('#llmMsg');
+    var testBtn = $('#llmTest');
+
+    function syncDot() {
+      btn.classList.toggle('is-on', REED.llm.hasKey());
+    }
+
+    function fill() {
+      var s = REED.llm.load();
+      fBase.value = s.base;
+      fModel.value = s.model;
+      fKey.value = s.key;
+    }
+
+    function say(text, kind) {
+      msg.textContent = text || '';
+      msg.className = 'sheet-msg' + (kind ? ' is-' + kind : '');
+    }
+
+    function open() {
+      fill();
+      say('');
+      mask.hidden = false;
+      setTimeout(function () { fKey.focus(); }, 60);
+    }
+
+    function close() { mask.hidden = true; }
+
+    function readInput() {
+      return {
+        base: fBase.value.trim(),
+        model: fModel.value.trim(),
+        key: fKey.value.trim()
+      };
+    }
+
+    function valid(v) {
+      if (!v.key) { say('先填一个 Key。或者点「清除」，平台会用本地规则继续问。', 'err'); return false; }
+      if (!/^https?:\/\//i.test(v.base)) { say('接口地址要以 http:// 或 https:// 开头。', 'err'); return false; }
+      return true;
+    }
+
+    btn.addEventListener('click', open);
+    $('#llmClose').addEventListener('click', close);
+    mask.addEventListener('click', function (e) { if (e.target === mask) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !mask.hidden) close();
+    });
+
+    $('#llmSave').addEventListener('click', function () {
+      var v = readInput();
+      if (!valid(v)) return;
+      REED.llm.save(v);
+      syncDot();
+      say('已存在这台设备上。回到觉察，下一个问题就会由模型来问。', 'ok');
+    });
+
+    $('#llmClear').addEventListener('click', function () {
+      REED.llm.clear();
+      fill();
+      syncDot();
+      say('已清除。平台回到本地规则模式，已有的记录不受影响。', 'ok');
+    });
+
+    testBtn.addEventListener('click', function () {
+      var v = readInput();
+      if (!valid(v)) return;
+      REED.llm.save(v);
+      syncDot();
+      say('正在连…');
+      testBtn.disabled = true;
+      REED.llm.test().then(function (t) {
+        say('连上了。模型回话：' + t, 'ok');
+      }).catch(function (err) {
+        say('没连上：' + err.message +
+          '。若是跨域被拦，说明这家接口不允许浏览器直连，需要加一层代理。', 'err');
+      }).then(function () {
+        testBtn.disabled = false;
+      });
+    });
+
+    syncDot();
+  }
+
   function init() {
     REED.store.load();
     REED.dialogue.init();
+    initLLM();
     if (REED.lens) REED.lens.init();
 
     $$('#nav a').forEach(function (a) {
