@@ -1,0 +1,405 @@
+/* ============================================================
+   芦苇认知 · 四层解释透镜
+   切换器 + 五行环 / 卦画 / 机制卡 / 对话卡
+   ============================================================ */
+
+.lens-switch {
+  display: flex;
+  align-items: baseline;
+  gap: .25rem;
+  flex-wrap: wrap;
+  margin-bottom: var(--s-3);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.lens-tab {
+  position: relative;
+  font-family: var(--serif);
+  font-size: var(--t-sm);
+  letter-spacing: .14em;
+  color: var(--ink-3);
+  background: none;
+  border: 0;
+  padding: .55rem .85rem .7rem;
+  cursor: pointer;
+  transition: color .24s var(--ease);
+}
+
+.lens-tab::after {
+  content: "";
+  position: absolute;
+  left: .85rem;
+  right: .85rem;
+  bottom: -1px;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s var(--ease);
+}
+
+.lens-tab:hover { color: var(--ink-2); }
+.lens-tab.is-on { color: var(--ink); }
+.lens-tab.is-on::after { transform: scaleX(1); }
+
+.lens-switch-note {
+  margin-left: auto;
+  padding-bottom: .7rem;
+  font-size: var(--t-xs);
+  letter-spacing: .18em;
+  color: var(--ink-4);
+}
+
+/* ---------- 通用版面 ---------- */
+
+.lens-pane {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  animation: rise .45s var(--ease) both;
+  min-width: 0;
+}
+
+.lens-split {
+  display: grid;
+  grid-template-columns: minmax(260px, 400px) minmax(0, 1fr);
+  min-width: 0;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+.lens-svg { max-width: 100%; }
+
+/* 地图页在窄屏把 SVG 锁成 780px 宽，好让冰山图横向平移。
+   透镜里的图不是那张长图，必须跟着容器走。 */
+.map-canvas .lens-svg { min-width: 0; width: 100%; }
+
+.lens-figure { justify-self: center; width: 100%; min-width: 0; }
+
+.figure-cap {
+  margin: var(--s-2) 0 0;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: var(--t-xs);
+  line-height: 2;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+
+.lens-cards { display: grid; gap: 0; }
+
+.lens-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.lens-card {
+  padding: var(--s-3) 0 var(--s-4);
+  border-top: 1px solid var(--line-soft);
+}
+
+.lens-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+
+.lens-card-name {
+  font-family: var(--serif);
+  font-size: var(--t-md);
+  letter-spacing: .06em;
+  color: var(--ink);
+}
+
+.lens-state {
+  margin-left: auto;
+  font-size: var(--t-xs);
+  letter-spacing: .12em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.lens-src {
+  margin: .2rem 0 .55rem;
+  font-size: var(--t-xs);
+  letter-spacing: .04em;
+  color: var(--ink-3);
+}
+
+.lens-read {
+  margin: 0 0 .55rem;
+  font-size: var(--t-sm);
+  line-height: 1.95;
+  color: var(--ink-2);
+}
+
+.lens-evi {
+  margin: 0 0 .55rem;
+  padding: 0;
+  list-style: none;
+}
+
+.lens-evi li {
+  position: relative;
+  padding-left: 1rem;
+  font-family: var(--serif);
+  font-size: var(--t-sm);
+  line-height: 1.9;
+  color: var(--ink-2);
+}
+
+.lens-evi li::before {
+  content: "·";
+  position: absolute;
+  left: .25rem;
+  color: var(--reed);
+}
+
+.lens-evi li.is-more { color: var(--ink-3); font-size: var(--t-xs); }
+
+.lens-quiet {
+  margin: 0 0 .55rem;
+  font-size: var(--t-xs);
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+
+.lens-do {
+  margin: 0;
+  padding-left: .7rem;
+  border-left: 1px solid var(--reed-line);
+  font-size: var(--t-sm);
+  line-height: 1.9;
+  color: var(--reed-deep);
+}
+
+.lens-card.is-quiet { opacity: .62; }
+
+.lens-caveat {
+  margin: 0 0 var(--s-3);
+  padding: .6rem .8rem;
+  background: var(--cinnabar-wash);
+  border-left: 2px solid rgba(158, 61, 51, .35);
+  font-size: var(--t-xs);
+  line-height: 1.9;
+  color: var(--ink-2);
+}
+
+.lens-note {
+  margin-top: var(--s-5);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line-soft);
+  max-width: 76ch;
+  font-size: var(--t-xs);
+  line-height: 2.1;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+}
+
+.lens-note strong {
+  display: inline-block;
+  margin-right: .6rem;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: var(--t-sm);
+  letter-spacing: .16em;
+  color: var(--reed-deep);
+}
+
+.lens-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  min-height: 420px;
+  padding: var(--s-5);
+  text-align: center;
+}
+
+.lens-empty p {
+  margin: 0;
+  max-width: 34ch;
+  font-size: var(--t-sm);
+  line-height: 2;
+  color: var(--ink-4);
+}
+
+.lens-empty a {
+  color: var(--reed-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--reed-line);
+  font-size: var(--t-sm);
+}
+
+/* ---------- 五行 ---------- */
+
+.wx-ring { max-width: 400px; margin: 0 auto; display: block; }
+
+.wx-disc { fill: var(--paper-lift); fill-opacity: .7; stroke-width: 1; }
+
+.wx-han-svg {
+  font-family: var(--serif);
+  font-size: 23px;
+  text-anchor: middle;
+  letter-spacing: .04em;
+}
+
+.wx-tag-svg {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  text-anchor: middle;
+  fill: var(--ink-3);
+}
+
+.wx-foot-svg {
+  font-size: 10px;
+  letter-spacing: .18em;
+  fill: var(--ink-3);
+}
+
+.wx-sheng {
+  stroke: rgba(120, 114, 98, .62);
+  stroke-width: 1.1;
+  fill: none;
+}
+
+.wx-ke {
+  stroke: rgba(120, 114, 98, .32);
+  stroke-width: .9;
+  stroke-dasharray: 3 6;
+  fill: none;
+}
+
+.wx-card { border-top-color: var(--line); }
+
+.wx-han {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--c);
+}
+
+/* ---------- 周易 ---------- */
+
+.yj-figure { max-width: 340px; margin: 0 auto; display: block; }
+
+.yj-line { fill: var(--ink); opacity: .8; }
+.yj-bracket { stroke: var(--line); stroke-width: 1; }
+
+.yj-tag {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: .16em;
+  fill: var(--ink-3);
+}
+
+.yj-han {
+  font-family: var(--serif);
+  font-size: 24px;
+  fill: var(--ink-2);
+  letter-spacing: .04em;
+}
+
+.yj-note {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: .08em;
+  fill: var(--ink-3);
+}
+
+.lens-read-pane { padding-top: var(--s-3); }
+
+.yj-name {
+  margin: 0 0 .3rem;
+  font-family: var(--serif);
+  font-size: clamp(1.75rem, 3.4vw, 2.25rem);
+  letter-spacing: .1em;
+  color: var(--ink);
+}
+
+.yj-sub {
+  margin: 0 0 var(--s-4);
+  font-size: var(--t-xs);
+  letter-spacing: .12em;
+  color: var(--ink-3);
+}
+
+.yj-dl { margin: 0; }
+
+.yj-dl > div {
+  padding: var(--s-3) 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.yj-dl dt {
+  margin-bottom: .2rem;
+  font-size: var(--t-xs);
+  letter-spacing: .2em;
+  color: var(--reed);
+}
+
+.yj-dl dd {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--t-base);
+  line-height: 1.9;
+  color: var(--ink-2);
+}
+
+.dd-tail {
+  display: block;
+  margin-top: .15rem;
+  font-family: var(--sans);
+  font-size: var(--t-xs);
+  letter-spacing: .04em;
+  color: var(--ink-3);
+}
+
+/* ---------- 哲学 ---------- */
+
+.philo-say {
+  margin: .2rem 0 .35rem;
+  font-family: var(--serif);
+  font-size: var(--t-lg);
+  line-height: 1.7;
+  letter-spacing: .04em;
+  color: var(--ink);
+}
+
+.philo-say::before { content: "「"; color: var(--paper-sink); }
+.philo-say::after  { content: "」"; color: var(--paper-sink); }
+
+.philo-ask {
+  margin: var(--s-3) 0 0;
+  padding-top: .6rem;
+  border-top: 1px dashed var(--line);
+  font-family: var(--serif);
+  font-size: var(--t-base);
+  line-height: 1.85;
+  color: var(--reed-deep);
+}
+
+.philo-ask::before {
+  content: "他问你";
+  display: block;
+  margin-bottom: .15rem;
+  font-family: var(--sans);
+  font-size: var(--t-xs);
+  letter-spacing: .22em;
+  color: var(--ink-4);
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 900px) {
+  .lens-split { grid-template-columns: 1fr; }
+  .lens-figure { max-width: 400px; }
+  .lens-switch-note { display: none; }
+}
+
+@media (max-width: 720px) {
+  .lens-grid-2 { grid-template-columns: 1fr; }
+  .lens-pane { padding: var(--s-3) var(--s-2) var(--s-4); }
+  .lens-tab { padding: .5rem .6rem .65rem; }
+}

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>芦苇认知 · 看见你思考的样子</title>
+<meta name="description" content="用提问帮你看见自己的思维结构。水面之上是行为，水面之下是模式，深水区是你很少说出口的信念。">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/map.css">
+<link rel="stylesheet" href="assets/css/lens.css">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="#/">
+    <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M20 38V12" />
+      <path d="M20 22c-4-1-6-4-6.5-8" />
+      <path d="M20 26c4-1.6 6.2-4.6 6.6-8.6" />
+      <path d="M20 15c-2.6-.8-4-3-4.2-6" />
+      <path d="M20 18.5c2.4-.8 3.8-2.8 4-5.6" />
+    </svg>
+    <span class="brand-text">芦苇认知</span>
+  </a>
+  <nav class="nav" id="nav">
+    <a href="#/" data-view="home">入口</a>
+    <a href="#/dialogue" data-view="dialogue">觉察</a>
+    <a href="#/map" data-view="map">认知地图</a>
+    <a href="#/other" data-view="other">他人</a>
+    <a href="#/about" data-view="about">方法与边界</a>
+  </nav>
+</header>
+
+<main id="app">
+
+  <!-- ========== 入口 ========== -->
+  <section class="view" id="view-home">
+    <div class="hero">
+      <div class="hero-reed" aria-hidden="true">
+        <svg viewBox="0 0 220 420" preserveAspectRatio="xMidYMax meet">
+          <g class="reed-stroke">
+            <path d="M110 420C110 330 104 250 96 176" />
+            <path d="M110 420c2-92 10-170 22-244" />
+            <path d="M110 420c-4-80-14-150-30-214" />
+            <path d="M110 420c0-70 4-140 6-206" />
+          </g>
+          <g class="reed-plume">
+            <path d="M96 176c-9-14-11-34-4-54 5-14 13-22 13-22s8 10 11 24c4 20 1 39-8 52z" />
+            <path d="M132 176c-8-12-10-30-4-48 4-13 11-20 11-20s7 9 10 22c3 18 0 35-7 46z" />
+            <path d="M80 206c-6-10-8-24-3-38 3-10 8-16 8-16s6 7 8 17c3 14 1 28-5 37z" />
+            <path d="M116 214c-4-8-5-19-1-30 2-8 6-12 6-12s4 5 6 12c2 11 1 22-3 30z" />
+          </g>
+        </svg>
+      </div>
+
+      <p class="eyebrow">认识你自己，先从听清自己怎么说开始</p>
+      <h1 class="hero-title">
+        人是一根<br>有思想的芦苇
+      </h1>
+      <p class="hero-lead">
+        芦苇很轻，风一吹就弯。但它知道自己为什么弯。<br>
+        这里不给你答案，只给你一串问题——让你看见自己思考时，站的那块地面。
+      </p>
+
+      <div class="fork">
+        <a class="fork-card" href="#/dialogue">
+          <span class="fork-num">一</span>
+          <h2>往内看</h2>
+          <p>十四个问题，走完一遍。把散落在生活里的反应，理成一张你自己的冰山。</p>
+          <span class="fork-go">开始觉察</span>
+        </a>
+        <a class="fork-card" href="#/other">
+          <span class="fork-num">二</span>
+          <h2>看一个人</h2>
+          <p>写下一个让你困惑的人。不评判他，只推演他的结构，再想办法跟他说话。</p>
+          <span class="fork-go">写下一个人</span>
+        </a>
+      </div>
+
+      <p class="hero-foot">
+        所有内容只存在这台设备的浏览器里。没有账号，没有上传。
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== 觉察对话 ========== -->
+  <section class="view" id="view-dialogue">
+    <div class="dialogue-shell">
+      <aside class="rail">
+        <div class="rail-inner">
+          <p class="rail-label">当前这一遍</p>
+          <ol class="rail-chapters" id="chapters"></ol>
+          <div class="rail-sunk">
+            <p class="rail-label">已经沉下来的</p>
+            <ul id="sunkList" class="sunk-list"></ul>
+          </div>
+        </div>
+      </aside>
+
+      <div class="thread" id="thread">
+        <div class="thread-inner" id="threadInner"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 认知地图 ========== -->
+  <section class="view" id="view-map">
+    <div class="map-head">
+      <div>
+        <p class="eyebrow">你此刻的结构</p>
+        <h1 class="section-title" id="mapTitle">还没有画出冰山</h1>
+        <p class="section-sub" id="mapSub">走一遍觉察，或者从下面手动添一块。</p>
+      </div>
+      <div class="map-actions">
+        <button class="btn" id="btnSeed" type="button">载入示例</button>
+        <button class="btn" id="btnExport" type="button">导出文本</button>
+        <button class="btn btn-quiet" id="btnReset" type="button">清空</button>
+      </div>
+    </div>
+    <div class="lens-switch" id="lensSwitch" role="group" aria-label="换一种读法">
+      <button class="lens-tab is-on" type="button" data-lens="iceberg" aria-pressed="true">冰山</button>
+      <button class="lens-tab" type="button" data-lens="wuxing" aria-pressed="false">五行</button>
+      <button class="lens-tab" type="button" data-lens="yijing" aria-pressed="false">周易</button>
+      <button class="lens-tab" type="button" data-lens="psy" aria-pressed="false">心理</button>
+      <button class="lens-tab" type="button" data-lens="philo" aria-pressed="false">哲学</button>
+      <span class="lens-switch-note">同一张图，换一种读法</span>
+    </div>
+    <div class="map-canvas" id="mapCanvas"></div>
+    <div class="map-legend" id="mapLegend"></div>
+  </section>
+
+  <!-- ========== 他人 ========== -->
+  <section class="view" id="view-other">
+    <div class="other-shell">
+      <header class="other-head">
+        <p class="eyebrow">他人的认知结构</p>
+        <h1 class="section-title">写下一个人</h1>
+        <p class="section-sub">
+          不需要公道，先把你想说的都写出来。这里的推演不是判断他是什么人，
+          而是猜他为什么那样做，以及你可以怎么和他相处。
+        </p>
+      </header>
+
+      <div class="other-form">
+        <label class="field-label" for="otherInput">他是谁，做过什么，你当时什么感受</label>
+        <textarea id="otherInput" rows="7" placeholder="比如：我们组的小组长，每次讨论都要把别人的方案改一遍，改的其实只是措辞。我提了一个想法，他说『这个我们之前考虑过』，然后就没下文了。我后来在会上就不太想说话了。"></textarea>
+        <div class="other-actions">
+          <span class="counter" id="otherCount">0 字</span>
+          <button class="btn btn-ink" id="btnAnalyse" type="button">推演他的结构</button>
+        </div>
+      </div>
+
+      <div class="other-result" id="otherResult" hidden></div>
+    </div>
+  </section>
+
+  <!-- ========== 方法与边界 ========== -->
+  <section class="view" id="view-about">
+    <div class="prose">
+      <p class="eyebrow">方法与边界</p>
+      <h1 class="section-title">这张地图是怎么来的</h1>
+
+      <h2>三层冰山</h2>
+      <p>
+        <strong>水面之上</strong>：能被别人看见的行为和你自己的即时反应。<br>
+        <strong>水面之下</strong>：让这些反应反复出现的模式——你怎么解读一件事，什么最容易戳到你。<br>
+        <strong>深水区</strong>：你很少说出口、但一直在指挥你的信念和价值排序。
+      </p>
+      <p>
+        越往下越难被自己看见，也越难改变；但越往下，改动一点，上面的东西会跟着松。
+      </p>
+
+      <h2>四种读法</h2>
+      <p>
+        同一张冰山，可以换四种读法看。<strong>五行</strong>借《尚书·洪范》的五个字，讲五种动作：伸出去、被看见、托住别人、卡标准、退回来。<strong>周易</strong>借《说卦传》的八卦性情，把外层的反应和内层的信念叠成一个处境的名字。<strong>心理</strong>把几个有出处的机制贴到你的句子上。<strong>哲学</strong>让六个人各问你一句话。
+      </p>
+      <p>
+        这四种读法都是<strong>取象比类</strong>，不是测算：不排盘、不起卦、不断吉凶，也不给人格类型。归类只看你写下的词，词不达意时它会读错。你可以不同意——不同意的地方，往往更接近你。
+      </p>
+
+      <h2>问题为什么这么问</h2>
+      <p>
+        不问「你是什么性格」，因为没人答得准。只问最近发生过的具体的事，然后在你用过的词上停下来。
+        你说「我应该」，就问这个应该谁定的；你说「总是」，就问那一次例外；你说「怕」，就问最坏能坏到什么程度。
+      </p>
+      <p>
+        每一次回答都会被留下一句原话作为证据。地图上的每个节点，都要能追回到你亲口说过的那句话。
+      </p>
+
+      <h2>关于他人的部分</h2>
+      <p>
+        它不给人格标签，不做诊断，不评价好坏。它只做三件事：猜他在保护什么、他的反应可能从哪来、你可以怎么跟他说话。
+      </p>
+      <p>
+        请记住：你写下的描述是<strong>你的视角</strong>，不是他的全貌。一个人在你面前的样子，往往有一部分是你把他推成那样的。
+        这份推演最大的用处，是让你看清自己的哪一部分被激活了。
+      </p>
+
+      <h2>它做不到什么</h2>
+      <p>
+        它不替代心理咨询，不做任何临床判断。如果某些内容让你持续痛苦，请找专业的人。
+        它也不能替你改变——地图只是地图，走路还是你自己的事。
+      </p>
+
+      <h2>数据</h2>
+      <p>
+        全部记录保存在你这台设备的浏览器本地存储里。没有服务器，没有账号，清空浏览器数据即彻底删除。
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span>芦苇认知</span>
+  <span class="dot">·</span>
+  <span>内容保存在本机</span>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/dialogue.js"></script>
+<script src="assets/js/portrait.js"></script>
+<script src="assets/js/map.js"></script>
+<script src="assets/js/lens.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

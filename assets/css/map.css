@@ -1,0 +1,345 @@
+/* ============================================================
+   芦苇认知 · 冰山地图与他人画像
+   ============================================================ */
+
+/* ---------- 地图页 ---------- */
+
+#view-map,
+#view-other {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 7vh, 4.5rem) clamp(1.25rem, 5vw, 3rem) var(--s-7);
+}
+
+.map-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-5);
+}
+
+.map-actions {
+  display: flex;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+
+.map-canvas {
+  position: relative;
+  width: 100%;
+  min-height: 480px;
+  border: 1px solid var(--line-soft);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0) 30%),
+    var(--paper-lift);
+  overflow: hidden;
+}
+
+.map-canvas svg { display: block; width: 100%; height: auto; }
+
+.map-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  padding: var(--s-5);
+  text-align: center;
+}
+
+.map-empty p {
+  margin: 0;
+  max-width: 34ch;
+  color: var(--ink-4);
+  font-size: var(--t-sm);
+  line-height: 2;
+}
+
+.map-empty a {
+  color: var(--reed-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--reed-line);
+}
+
+/* SVG 地图元素 */
+
+.water-line {
+  stroke: rgba(93, 111, 96, .3);
+  stroke-width: 1;
+  stroke-dasharray: 3 7;
+}
+
+.layer-band-label {
+  font-family: var(--serif);
+  font-size: 11px;
+  letter-spacing: .3em;
+  fill: var(--ink-4);
+}
+
+.layer-name {
+  font-family: var(--serif);
+  font-size: 15px;
+  letter-spacing: .12em;
+  fill: var(--ink-3);
+}
+
+.depth-tick {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.node-ring {
+  fill: var(--paper-lift);
+  stroke: var(--reed-line);
+  stroke-width: 1;
+  transition: fill .25s var(--ease), stroke .25s var(--ease);
+}
+
+.node-core {
+  fill: var(--reed);
+  transition: fill .25s var(--ease);
+}
+
+.node-label {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  fill: var(--ink-2);
+  letter-spacing: .02em;
+}
+
+.node-group { cursor: pointer; }
+
+.node-group:hover .node-ring {
+  fill: var(--reed-wash);
+  stroke: var(--reed);
+}
+
+.node-group:hover .node-label { fill: var(--ink); }
+
+.node-group.is-dim { opacity: .28; }
+
+.edge {
+  fill: none;
+  stroke: rgba(93, 111, 96, .32);
+  stroke-width: 1;
+  transition: stroke .25s var(--ease);
+}
+
+.edge.is-strong { stroke: rgba(93, 111, 96, .55); }
+.edge.is-dim { opacity: .1; }
+
+/* 悬停详情 */
+
+.map-tip {
+  position: absolute;
+  z-index: 5;
+  max-width: 260px;
+  padding: .85rem 1rem;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  font-size: var(--t-xs);
+  line-height: 1.8;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .2s var(--ease), transform .2s var(--ease);
+  box-shadow: var(--shadow-soft);
+}
+
+.map-tip.is-on { opacity: 1; transform: translateY(0); }
+
+.map-tip .tip-type {
+  display: block;
+  margin-bottom: .25rem;
+  color: rgba(246,243,234,.55);
+  letter-spacing: .16em;
+}
+
+.map-tip .tip-quote {
+  display: block;
+  margin-top: .45rem;
+  padding-top: .45rem;
+  border-top: 1px solid rgba(246,243,234,.16);
+  color: rgba(246,243,234,.72);
+  font-family: var(--serif);
+  font-size: var(--t-xs);
+}
+
+.map-legend {
+  display: flex;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  margin-top: var(--s-3);
+  font-size: var(--t-xs);
+  color: var(--ink-4);
+  letter-spacing: .06em;
+}
+
+.map-legend span { display: inline-flex; align-items: center; gap: .4rem; }
+
+.map-legend i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.lg-surface { background: var(--paper-sink); border: 1px solid var(--ink-3); }
+.lg-middle  { background: rgba(93,111,96,.4); border: 1px solid var(--reed); }
+.lg-deep    { background: var(--cinnabar); border: 1px solid var(--cinnabar); }
+
+/* ---------- 他人画像 ---------- */
+
+.other-shell { max-width: 760px; }
+
+.other-head { margin-bottom: var(--s-5); }
+
+.other-form {
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  background: var(--paper-lift);
+}
+
+.field-label {
+  display: block;
+  margin-bottom: var(--s-2);
+  font-size: var(--t-xs);
+  letter-spacing: .18em;
+  color: var(--ink-3);
+}
+
+#otherInput {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  padding: 0 0 var(--s-3);
+  font-family: inherit;
+  font-size: var(--t-base);
+  line-height: 2;
+  color: var(--ink);
+  resize: vertical;
+  outline: none;
+  transition: border-color .25s var(--ease);
+}
+
+#otherInput:focus { border-bottom-color: var(--reed); }
+
+#otherInput::placeholder { color: var(--ink-4); }
+
+.other-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+}
+
+.other-result {
+  margin-top: var(--s-6);
+  animation: rise .6s var(--ease) both;
+}
+
+.result-block {
+  padding: var(--s-4) 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.result-block h3 {
+  margin: 0 0 var(--s-3);
+  font-family: var(--serif);
+  font-size: var(--t-md);
+  font-weight: 400;
+  letter-spacing: .06em;
+}
+
+.facet {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-3);
+  border-left: 1px solid var(--line);
+}
+
+.facet-title {
+  margin: 0 0 .35rem;
+  font-size: var(--t-base);
+  color: var(--ink);
+  letter-spacing: .03em;
+}
+
+.facet-why {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  line-height: 1.95;
+}
+
+.facet-quote {
+  margin: .55rem 0 0;
+  padding-left: .7rem;
+  border-left: 1px solid var(--reed-line);
+  font-family: var(--serif);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+}
+
+.advice {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: adv;
+}
+
+.advice li {
+  position: relative;
+  counter-increment: adv;
+  padding-left: 1.9rem;
+  margin-bottom: var(--s-3);
+  color: var(--ink-2);
+  font-size: var(--t-base);
+  line-height: 1.95;
+}
+
+.advice li::before {
+  content: counter(adv, cjk-ideographic);
+  position: absolute;
+  left: 0;
+  top: .1rem;
+  font-family: var(--serif);
+  font-size: var(--t-sm);
+  color: var(--reed);
+}
+
+.caution {
+  padding: var(--s-3);
+  background: var(--cinnabar-wash);
+  border-left: 2px solid rgba(158, 61, 51, .4);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.95;
+}
+
+.caution strong { color: var(--cinnabar); font-weight: 600; }
+
+.other-empty {
+  padding: var(--s-6) 0;
+  text-align: center;
+  color: var(--ink-4);
+  font-size: var(--t-sm);
+}
+
+@media (max-width: 720px) {
+  .map-canvas {
+    min-height: 380px;
+    overflow-x: auto;
+  }
+  .map-canvas svg { min-width: 780px; }
+  .map-head { align-items: flex-start; }
+  .map-actions { width: 100%; }
+  .map-actions .btn { flex: 1 1 auto; text-align: center; }
+}
