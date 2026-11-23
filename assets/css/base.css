@@ -339,3 +339,34 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* 窄屏：顶栏收成一行，导航横向滑动，不再占掉两行高度 */
+
+@media (max-width: 720px) {
+  .topbar {
+    gap: .75rem;
+    padding: var(--s-2) 1rem;
+  }
+
+  .brand-text { font-size: var(--t-base); }
+
+  .nav {
+    flex-wrap: nowrap;
+    min-width: 0;
+    gap: .55rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .nav::-webkit-scrollbar { display: none; }
+
+  .nav a {
+    white-space: nowrap;
+    font-size: var(--t-xs);
+    letter-spacing: .04em;
+  }
+
+  /* 品牌本身就能回入口，窄屏把「入口」让出来 */
+  .nav a[data-view="home"] { display: none; }
+}

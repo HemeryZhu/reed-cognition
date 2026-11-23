@@ -208,7 +208,21 @@
     if (btn) btn.addEventListener('click', function () {
       var text = input.value.trim();
       if (text.length < 12) { toast('再多写几句'); return; }
-      REED.portrait.render(text);
+      var label = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '正在推演…';
+      var restore = function () {
+        btn.disabled = input.value.trim().length < 12;
+        btn.textContent = label;
+      };
+      try {
+        var task = REED.portrait.render(text);
+        if (task && task.then) task.then(restore, restore);
+        else restore();
+      } catch (e) {
+        restore();
+        toast('出了点问题，再试一次');
+      }
     });
 
     if (!location.hash) location.replace('#/');

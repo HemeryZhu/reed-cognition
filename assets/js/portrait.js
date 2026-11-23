@@ -206,15 +206,15 @@ REED.portrait = (function () {
     if (r.tooShort) {
       box.hidden = false;
       box.innerHTML = '<div class="other-empty">再多写几句。至少要有一件具体的事：他说了什么、做了什么、你当时怎么反应。</div>';
-      return;
+      return Promise.resolve();
     }
 
     if (REED.llm && REED.llm.hasKey()) {
-      renderWithModel(box, raw, r);
-      return;
+      return renderWithModel(box, raw, r);
     }
 
     renderLocal(box, r);
+    return Promise.resolve();
   }
 
   /* ---------- 有模型时：让它基于具体细节推演 ---------- */
@@ -243,7 +243,7 @@ REED.portrait = (function () {
     '</div>';
     box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    REED.llm.json([
+    return REED.llm.json([
       { role: 'system', content: PORTRAIT_SYSTEM },
       { role: 'user', content: raw }
     ], { maxTokens: 1100, temperature: 0.6 }).then(function (res) {

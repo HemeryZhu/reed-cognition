@@ -156,6 +156,37 @@
   color: var(--ink-4);
 }
 
+/* 进度：走完多少问 */
+
+.rail-progress {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 0 0 var(--s-3);
+}
+
+.rail-progress-num {
+  font-size: var(--t-xs);
+  letter-spacing: .1em;
+  color: var(--ink-4);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.rail-progress-bar {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.rail-progress-bar i {
+  display: block;
+  height: 1px;
+  background: var(--reed);
+  transition: width .5s var(--ease);
+}
+
 .rail-chapters {
   list-style: none;
   margin: 0 0 var(--s-6);
@@ -212,6 +243,31 @@
   color: var(--reed);
   letter-spacing: .12em;
 }
+
+/* 跳过 */
+
+.skip-row {
+  margin-top: .75rem;
+  text-align: right;
+}
+
+.skip-link {
+  padding: .2rem 0;
+  border: 0;
+  background: none;
+  font-family: var(--sans);
+  font-size: var(--t-xs);
+  letter-spacing: .08em;
+  color: var(--ink-4);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color .2s var(--ease);
+}
+
+.skip-link:hover { color: var(--ink-2); }
+
+.turn-say.is-skip .say-body { color: var(--ink-4); }
 
 /* ---------- 对话流 ---------- */
 
@@ -459,7 +515,25 @@
   }
   .rail-chapters li::before { display: none; }
   .rail-chapters li.is-now { border-bottom-color: var(--ink); }
-  .rail-sunk { display: none; }
+  .rail-sunk { margin-top: var(--s-2); }
+  .rail-sunk .rail-label { display: none; }
+  .rail-sunk .sunk-list {
+    display: flex;
+    gap: .5rem;
+    overflow-x: auto;
+    padding-bottom: .2rem;
+  }
+  .rail-sunk .sunk-list li {
+    flex: 0 0 auto;
+    max-width: 13rem;
+    padding-left: .6rem;
+    font-size: var(--t-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rail-sunk .sunk-list li:nth-child(n+4) { display: none; }
+  .rail-sunk .sunk-list .sunk-tag { display: inline; margin-right: .35rem; }
   .fork { grid-template-columns: minmax(0, 1fr); }
   .hero-reed { opacity: .26; right: -3rem; }
 }

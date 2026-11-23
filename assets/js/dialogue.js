@@ -27,6 +27,7 @@ REED.dialogue = (function () {
         var a = act.getAttribute('data-act');
         if (a === 'toMap') { location.hash = '#/map'; }
         if (a === 'restart') { restart(); }
+        if (a === 'skip') { skipStep(); }
       }
     });
 
@@ -76,6 +77,26 @@ REED.dialogue = (function () {
 
   function renderRail() {
     var c = REED.store.get().cursor;
+    var total = 0;
+    var before = 0;
+    REED.CHAPTERS.forEach(function (ch, i) {
+      total += ch.steps.length;
+      if (i < c.ch) before += ch.steps.length;
+    });
+    var done = c.done ? total : before + c.step;
+    var pct = total ? Math.round(done / total * 100) : 0;
+
+    var prog = document.getElementById('railProgress');
+    if (!prog) {
+      prog = document.createElement('div');
+      prog.id = 'railProgress';
+      prog.className = 'rail-progress';
+      els.chapters.parentNode.insertBefore(prog, els.chapters);
+    }
+    prog.innerHTML =
+      '<span class="rail-progress-num">' + done + ' / ' + total + ' 问</span>' +
+      '<span class="rail-progress-bar"><i style="width:' + pct + '%"></i></span>';
+
     els.chapters.innerHTML = REED.CHAPTERS.map(function (ch, i) {
       var cls = i === c.ch ? 'is-now' : (i < c.ch || c.done ? 'is-done' : '');
       return '<li class="' + cls + '">' + ch.num + '　' + ch.name + '</li>';
@@ -161,6 +182,9 @@ REED.dialogue = (function () {
           '</div>' +
         '</div>' +
         '<p class="hint-keys" data-role="warn" hidden style="margin:.5rem 0 0;color:#9e3d33">再多写一点点，几个字也可以。</p>' +
+        '<div class="skip-row">' +
+          '<button type="button" class="skip-link" data-act="skip">这一问先跳过</button>' +
+        '</div>' +
         '<div style="margin-top:1.25rem">' +
           '<button class="btn btn-ink" type="button" data-act="submit">记下</button>' +
         '</div>';
@@ -168,7 +192,7 @@ REED.dialogue = (function () {
 
     els.thread.appendChild(zone);
     var ta = zone.querySelector('textarea');
-    if (ta && step.kind !== 'choice') {
+    if (ta && step.kind !== 'choice' && !isCoarse()) {
       setTimeout(function () { ta.focus(); }, 240);
     }
   }
@@ -186,7 +210,7 @@ REED.dialogue = (function () {
       foot.disabled = false;
     }
     var ta = zone.querySelector('textarea');
-    if (ta) setTimeout(function () { ta.focus(); }, 120);
+    if (ta && !isCoarse()) setTimeout(function () { ta.focus(); }, 120);
   }
 
   /* ---------- 提交 ---------- */
@@ -243,6 +267,35 @@ REED.dialogue = (function () {
     } else {
       localFlow(step, answer, chosen, chapterId);
     }
+  }
+
+  /* ---------- 跳过：不沉淀，也不追问 ---------- */
+
+  function skipStep() {
+    if (answering) return;
+    var step = currentStep();
+    var zone = $('#zone');
+    if (!step || !zone) return;
+
+    var c = REED.store.get().cursor;
+    REED.store.recordAnswer(step.id, { question: step.ask, answer: '（先跳过）' });
+
+    zone.remove();
+    els.thread.insertAdjacentHTML('beforeend',
+      '<div class="turn turn-say is-skip">' +
+        '<p class="say-label">这一问</p>' +
+        '<p class="say-body">先跳过了</p>' +
+      '</div>'
+    );
+
+    advance(null);
+    renderSunk();
+    renderRail();
+    renderCurrent();
+  }
+
+  function isCoarse() {
+    return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
   }
 
   /* ---------- 本地规则：没有 Key，或模型没接上 ---------- */
